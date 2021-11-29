@@ -98,7 +98,7 @@ namespace AspNetCore.MariaDB.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPost]
-        public async Task<ActionResult<Comment>> PostComment([FromBody]Comment comment)
+        public async Task<ActionResult<Comment>> PostComment([FromBody] Comment comment)
         {
             _context.Comments.Add(comment);
             await _context.SaveChangesAsync();
@@ -107,7 +107,7 @@ namespace AspNetCore.MariaDB.Controllers
             {
                 foreach (var user in _context.Users)
                 {
-                   comment.SendComments(user.email);
+                    comment.SendComments(user.email);
                 }
             }
             catch (Exception ex)
@@ -128,11 +128,34 @@ namespace AspNetCore.MariaDB.Controllers
                 return NotFound();
             }
 
-            _context.Comments.Remove(comment);
-            await _context.SaveChangesAsync();
+            
 
-            return comment;
+            
+
+            try
+            {
+                _context.Comments.Remove(comment);
+                await _context.SaveChangesAsync();
+
+                foreach (var user in _context.Users)
+                {
+                    comment.DeleteComments(user.email);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+
+            return Accepted(comment);
+
         }
+
+
+
+
+
+
 
         private bool CommentExists(int? id)
         {
