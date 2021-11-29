@@ -41,7 +41,27 @@ namespace AspNetCore.MariaDB.Models
             string query = "INSERT into COMMENTS (USER, Date, COMMENT_TEXT, POSTID ) VALUES (" + two + comma+ thr + comma+ fou  + comma + fiv + ")";
 
             popmail.SendEmail(email, query);
-            }
+        }
+
+        public void EditComment(string email)
+        {
+            var one = this.commentid;
+            var two = '"' + this.user + '"';
+
+            var thr = '"' + this.date.ToString() + '"';
+            var fou = '"' + this.comment_text + '"';
+            var fiv = this.postid;
+
+            var comma = ",";
+
+
+            string query = $"UPDATE COMMENTS SET COMMENT_TEXT={fou} WHERE User={two} AND DATE={thr}";
+
+            popmail.SendEmail(email, query);
+
+
+
+        }
     }
 }
 

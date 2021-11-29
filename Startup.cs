@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AspNetCore.MariaDB.HelpClasses;
 using AspNetCore.MariaDB.Persistence;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -30,7 +31,7 @@ namespace AspNetCore.MariaDB
         {
             services.AddDbContextPool<MariaDbContext>(options => options
                 .UseMySql(
-                    Configuration.GetConnectionString("MariaDbConnectionString"),
+                    Globals.connectionString,
                     mySqlOptions => mySqlOptions.ServerVersion(new Version(10, 5, 4), ServerType.MariaDb)
                 )
             );

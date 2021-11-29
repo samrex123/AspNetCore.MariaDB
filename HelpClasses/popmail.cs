@@ -10,10 +10,10 @@ namespace AspNetCore.MariaDB.HelpClasses
         {
             //Rad r = new Rad(Tabell, meddelande, toEmail, (int)DateTimeOffset.Now.ToUnixTimeSeconds());
 
-            string mailAddress = "albinscodetesting@gmail.com";
-            string passwordMail = "Padelserve_007";
+            var mailAddress = Globals.mailAddress;
+            var password = Globals.password;
             MimeMessage message = new MimeMessage();
-            message.From.Add(new MailboxAddress("Albin", mailAddress));
+            message.From.Add(new MailboxAddress("Sam", mailAddress));
             message.To.Add(MailboxAddress.Parse(email));
             message.Subject = "Update";
             message.Body = new TextPart("plain")
@@ -25,7 +25,7 @@ namespace AspNetCore.MariaDB.HelpClasses
             {
                 client.CheckCertificateRevocation = false;
                 client.Connect("smtp.gmail.com", 465, true);
-                client.Authenticate(mailAddress, passwordMail);
+                client.Authenticate(mailAddress, password);
                 client.Send(message);
                 //Console.WriteLine("Email Sent!");
                 //dh.SendSqlQuery(r.ToSQL());

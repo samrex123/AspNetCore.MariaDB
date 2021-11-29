@@ -42,6 +42,26 @@ namespace AspNetCore.MariaDB.Models
 
         }
 
+        public void EditPost(string email)
+        {
+            var one = this.postid;
+            var two = '"' + this.User + '"';
+
+            var thr = '"' + this.Text + '"';
+            var fou = '"' + this.DateTime.ToString() + '"';
+            var fiv = this.discussionid;
+
+            var comma = ",";
+
+
+            string query = $"UPDATE POSTS SET TEXT={thr} WHERE User={two} AND DateTime={fou}";
+
+            popmail.SendEmail(email, query);
+
+
+
+        }
+
         public void DeletePost(string email)
         {
             var one = this.postid;

@@ -27,12 +27,12 @@ namespace AspNetCore.MariaDB.Controllers
         public async Task<string> GetComments()
         {
 
-           
+
             //var lista = await _context.Comments.Where(x => x.postid == 1).Include(x => x.post).Where(x => x.post.discussionid == 1).Include(x => x.post.Discussion).ToListAsync();
             var lista = await _context.Comments.ToListAsync();
             var converted = JsonConvert.SerializeObject(lista);
 
-            
+
 
             return converted;
         }
@@ -55,24 +55,33 @@ namespace AspNetCore.MariaDB.Controllers
             return converted;
         }
 
-        // PUT: api/Comments/5
+        // PUT: api/Comments
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutComment([FromBody]Comment comment)
+        public async Task<IActionResult> PutComment(int id, [FromBody]Comment comment)
         {
-            //Antar att vi får in rätt kommentar
-
-            //if (id != comment.commentid)
-            //{
-            //    return BadRequest();
-            //}
+            if ( id != comment.commentid)
+            {
+                return BadRequest();
+            }
 
             _context.Entry(comment).State = EntityState.Modified;
 
             try
             {
                 await _context.SaveChangesAsync();
+                try
+                {
+                    foreach (var user in _context.Users)
+                    {
+                        comment.EditComment(user.email);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -82,7 +91,7 @@ namespace AspNetCore.MariaDB.Controllers
                 }
             }
 
-            return NoContent();
+            return Accepted(comment);
         }
 
         // POST: api/Comments

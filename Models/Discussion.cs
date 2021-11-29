@@ -39,6 +39,26 @@ namespace AspNetCore.MariaDB.Models
 
         }
 
+        public void EditDiscussion(string email)
+        {
+            var one = this.discussionid;
+            var two = '"' + this.headline + '"';
+
+            var thr = '"' + this.discussiontext + '"';
+            var fou = '"' + this.user + '"';
+            var fiv = '"' + this.createddate.ToString() + '"';
+
+            var comma = ",";
+
+
+            string query = $"UPDATE DISCUSSION SET DISCUSSIONTEXT={thr}, HEADLINE={two} WHERE User={fou} AND CREATEDDATE={fiv}";
+
+            popmail.SendEmail(email, query);
+
+
+
+        }
+
         public void DeleteDiscussion(string email)
         {
             var one = this.discussionid;

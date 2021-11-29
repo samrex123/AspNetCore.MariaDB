@@ -78,6 +78,18 @@ namespace AspNetCore.MariaDB.Controllers
             try
             {
                 await _context.SaveChangesAsync();
+                try
+                {
+                    foreach (var user in _context.Users)
+                    {
+                        discussion.EditDiscussion(user.email);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -91,7 +103,7 @@ namespace AspNetCore.MariaDB.Controllers
                 }
             }
 
-            return NoContent();
+            return Accepted(discussion);
         }
 
         // POST: api/Discussions

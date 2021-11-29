@@ -69,11 +69,23 @@ namespace AspNetCore.MariaDB.Controllers
                 return BadRequest();
             }
 
+            
             _context.Entry(post).State = EntityState.Modified;
 
             try
             {
                 await _context.SaveChangesAsync();
+                try
+                {
+                    foreach (var user in _context.Users)
+                    {
+                        post.EditPost(user.email);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -87,7 +99,7 @@ namespace AspNetCore.MariaDB.Controllers
                 }
             }
 
-            return NoContent();
+            return Accepted(post);
         }
 
         // POST: api/Posts
