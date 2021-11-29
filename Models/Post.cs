@@ -15,8 +15,8 @@ namespace AspNetCore.MariaDB.Models
         [ForeignKey("discussionid")]
         public int discussionid { get; set; }
         public Discussion? Discussion { get; set; }
-        [ForeignKey("email")]
-        public string? UserMail { get; set; }
+        //[ForeignKey("email")]
+        //public string? UserMail { get; set; }
         public Post()
         {
 

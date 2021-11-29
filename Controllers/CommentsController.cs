@@ -94,6 +94,18 @@ namespace AspNetCore.MariaDB.Controllers
             _context.Comments.Add(comment);
             await _context.SaveChangesAsync();
 
+            try
+            {
+                foreach (var user in _context.Users)
+                {
+                   comment.SendComments(user.email);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+
             return CreatedAtAction("GetComment", new { id = comment.commentid }, comment);
         }
 
