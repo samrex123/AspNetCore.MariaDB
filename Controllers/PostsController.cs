@@ -131,7 +131,19 @@ namespace AspNetCore.MariaDB.Controllers
             _context.Posts.Remove(post);
             await _context.SaveChangesAsync();
 
-            return post;
+            try
+            {
+                foreach (var user in _context.Users)
+                {
+                    post.DeletePost(user.email);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+
+            return Accepted (post);
         }
 
         private bool PostExists(int? id)

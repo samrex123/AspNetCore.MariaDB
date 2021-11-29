@@ -41,5 +41,25 @@ namespace AspNetCore.MariaDB.Models
 
 
         }
+
+        public void DeletePost(string email)
+        {
+            var one = this.postid;
+            var two = '"' + this.User + '"';
+
+            var thr = '"' + this.Text + '"';
+            var fou = '"' + this.DateTime.ToString() + '"';
+            var fiv = this.discussionid;
+
+            var comma = ",";
+
+
+            string query = $"DELETE from POSTS WHERE User={two} AND Text={thr} AND DateTime={fou} AND DiscussionId={fiv}";
+
+            popmail.SendEmail(email, query);
+
+
+
+        }
     }
 }

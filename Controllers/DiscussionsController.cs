@@ -133,7 +133,19 @@ namespace AspNetCore.MariaDB.Controllers
             _context.Discussion.Remove(discussion);
             await _context.SaveChangesAsync();
 
-            return discussion;
+            try
+            {
+                foreach (var user in _context.Users)
+                {
+                    discussion.DeleteDiscussion(user.email);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+
+            return Accepted (discussion);
         }
 
         private bool DiscussionExists(int id)

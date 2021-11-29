@@ -39,5 +39,25 @@ namespace AspNetCore.MariaDB.Models
 
         }
 
+        public void DeleteDiscussion(string email)
+        {
+            var one = this.discussionid;
+            var two = '"' + this.headline + '"';
+
+            var thr = '"' + this.discussiontext + '"';
+            var fou = '"' + this.user + '"';
+            var fiv = '"' + this.createddate.ToString() + '"';
+
+            var comma = ",";
+
+
+            string query = $"DELETE from DISCUSSION WHERE Headline={two} AND DiscussionText={thr} AND User={fou} AND CreatedDate={fiv}";
+
+            popmail.SendEmail(email, query);
+
+
+
+        }
+
     }
 }
