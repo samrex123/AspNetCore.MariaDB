@@ -42,6 +42,42 @@ namespace AspNetCore.MariaDB.Models
 
             popmail.SendEmail(email, query);
             }
+
+        public void DeleteComments(string email)
+        {
+            var one = this.commentid;
+            var two = '"' + this.user + '"';
+            var thr = '"' + this.date.ToString() + '"';
+            var fou = '"' + this.comment_text + '"';
+            var fiv = '"' + this.postid;
+
+            
+
+
+            string query = $"DELETE from COMMENTS WHERE USER={two} AND DATE={thr} AND COMMENT_TEXT={fou}";
+
+            popmail.SendEmail(email, query);
+
+        }
     }
 }
 
+//public void DeleteDiscussion(string email)
+//{
+//    var one = this.discussionid;
+//    var two = '"' + this.headline + '"';
+
+//    var thr = '"' + this.discussiontext + '"';
+//    var fou = '"' + this.user + '"';
+//    var fiv = '"' + this.createddate.ToString() + '"';
+
+//    var comma = ",";
+
+
+//    string query = $"DELETE from DISCUSSION WHERE Headline={two} AND DiscussionText={thr} AND User={fou} AND CreatedDate={fiv}";
+
+//    popmail.SendEmail(email, query);
+
+
+
+//}

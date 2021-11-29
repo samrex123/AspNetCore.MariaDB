@@ -27,12 +27,12 @@ namespace AspNetCore.MariaDB.Controllers
         public async Task<string> GetComments()
         {
 
-           
+
             //var lista = await _context.Comments.Where(x => x.postid == 1).Include(x => x.post).Where(x => x.post.discussionid == 1).Include(x => x.post.Discussion).ToListAsync();
             var lista = await _context.Comments.ToListAsync();
             var converted = JsonConvert.SerializeObject(lista);
 
-            
+
 
             return converted;
         }
@@ -59,7 +59,7 @@ namespace AspNetCore.MariaDB.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutComment([FromBody]Comment comment)
+        public async Task<IActionResult> PutComment([FromBody] Comment comment)
         {
             //Antar att vi får in rätt kommentar
 
@@ -89,7 +89,7 @@ namespace AspNetCore.MariaDB.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPost]
-        public async Task<ActionResult<Comment>> PostComment([FromBody]Comment comment)
+        public async Task<ActionResult<Comment>> PostComment([FromBody] Comment comment)
         {
             _context.Comments.Add(comment);
             await _context.SaveChangesAsync();
@@ -98,7 +98,7 @@ namespace AspNetCore.MariaDB.Controllers
             {
                 foreach (var user in _context.Users)
                 {
-                   comment.SendComments(user.email);
+                    comment.SendComments(user.email);
                 }
             }
             catch (Exception ex)
@@ -119,11 +119,34 @@ namespace AspNetCore.MariaDB.Controllers
                 return NotFound();
             }
 
-            _context.Comments.Remove(comment);
-            await _context.SaveChangesAsync();
+            
 
-            return comment;
+            
+
+            try
+            {
+                _context.Comments.Remove(comment);
+                await _context.SaveChangesAsync();
+
+                foreach (var user in _context.Users)
+                {
+                    comment.DeleteComments(user.email);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+
+            return Accepted(comment);
+
         }
+
+
+
+
+
+
 
         private bool CommentExists(int? id)
         {
