@@ -10,10 +10,10 @@ namespace AspNetCore.MariaDB.HelpClasses
         {
             //Rad r = new Rad(Tabell, meddelande, toEmail, (int)DateTimeOffset.Now.ToUnixTimeSeconds());
 
-            string mailAddress = "mintestmail321@gmail.com";
-            string passwordMail = "1Kalaskula!";
+            string mailAddress = "albinscodetesting@gmail.com";
+            string passwordMail = "Padelserve_007";
             MimeMessage message = new MimeMessage();
-            message.From.Add(new MailboxAddress("Sam", mailAddress));
+            message.From.Add(new MailboxAddress("Albin", mailAddress));
             message.To.Add(MailboxAddress.Parse(email));
             message.Subject = "Update";
             message.Body = new TextPart("plain")
