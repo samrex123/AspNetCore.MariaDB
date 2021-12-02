@@ -74,12 +74,11 @@ namespace AspNetCore.MariaDB.Controllers
 
             try
             {
-                await _context.SaveChangesAsync();
+                //await _context.SaveChangesAsync();
                 try
                 {
                     foreach (var user in _context.Users)
                     {
-                        //post.DateTime = DateTime.Now;
                         post.EditPost(user.email);
                     }
                 }
@@ -113,8 +112,8 @@ namespace AspNetCore.MariaDB.Controllers
             post.DateTime = datenow;
             
 
-            _context.Posts.Add(post);
-            await _context.SaveChangesAsync();
+            //_context.Posts.Add(post);
+            //await _context.SaveChangesAsync();
             try
             {
                 foreach (var user in _context.Users)
@@ -141,8 +140,8 @@ namespace AspNetCore.MariaDB.Controllers
                 return NotFound();
             }
 
-            _context.Posts.Remove(post);
-            await _context.SaveChangesAsync();
+            //_context.Posts.Remove(post);
+            //await _context.SaveChangesAsync();
 
             try
             {

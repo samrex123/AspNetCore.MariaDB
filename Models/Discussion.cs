@@ -12,7 +12,7 @@ namespace AspNetCore.MariaDB.Models
         public string headline { get; set; }
         public string discussiontext { get; set; }
         public string user { get; set; }
-        public DateTime createddate { get; set; }
+        public DateTime createddate { get; set; } = DateTime.UtcNow;
 
         public Discussion()
         {

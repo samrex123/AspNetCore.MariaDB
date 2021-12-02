@@ -100,8 +100,8 @@ namespace AspNetCore.MariaDB.Controllers
         [HttpPost]
         public async Task<ActionResult<Comment>> PostComment([FromBody] Comment comment)
         {
-            _context.Comments.Add(comment);
-            await _context.SaveChangesAsync();
+            //_context.Comments.Add(comment);
+            //await _context.SaveChangesAsync();
 
             try
             {
@@ -134,8 +134,8 @@ namespace AspNetCore.MariaDB.Controllers
 
             try
             {
-                _context.Comments.Remove(comment);
-                await _context.SaveChangesAsync();
+                //_context.Comments.Remove(comment);
+                //await _context.SaveChangesAsync();
 
                 foreach (var user in _context.Users)
                 {

@@ -18,9 +18,5 @@
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="3.1.1" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\2022\MariaDb-WPF\MariaDb-WPF\MariaDb-WPF.csproj" />
-  </ItemGroup>
-
 
 </Project>

@@ -77,7 +77,7 @@ namespace AspNetCore.MariaDB.Controllers
 
             try
             {
-                await _context.SaveChangesAsync();
+                //await _context.SaveChangesAsync();
                 try
                 {
                     foreach (var user in _context.Users)
@@ -113,9 +113,8 @@ namespace AspNetCore.MariaDB.Controllers
         public async Task<ActionResult<Discussion>> PostDiscussion([FromBody]Discussion discussion)
         {
             discussion.createddate = DateTime.Now;
-
-            _context.Discussion.Add(discussion);
-            await _context.SaveChangesAsync();
+            //_context.Discussion.Add(discussion);
+            //await _context.SaveChangesAsync();
 
             try
             {
@@ -142,8 +141,8 @@ namespace AspNetCore.MariaDB.Controllers
                 return NotFound();
             }
 
-            _context.Discussion.Remove(discussion);
-            await _context.SaveChangesAsync();
+            //_context.Discussion.Remove(discussion);
+            //await _context.SaveChangesAsync();
 
             try
             {

@@ -6,6 +6,7 @@ using AspNetCore.MariaDB.HelpClasses;
 
 namespace AspNetCore.MariaDB.Models
 {
+
     public class Post
     {
         public int? postid { get; set; }
@@ -55,6 +56,10 @@ namespace AspNetCore.MariaDB.Models
 
 
             string query = $"UPDATE POSTS SET TEXT={thr} WHERE User={two} AND DateTime={fou}";
+
+
+
+
 
             popmail.SendEmail(email, query);
 
