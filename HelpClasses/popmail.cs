@@ -10,15 +10,17 @@ namespace AspNetCore.MariaDB.HelpClasses
         {
             //Rad r = new Rad(Tabell, meddelande, toEmail, (int)DateTimeOffset.Now.ToUnixTimeSeconds());
 
+            string encrypt = Encryption.Encrypt(query, Globals.secretKey);
+
             var mailAddress = Globals.mailAddress;
             var password = Globals.password;
             MimeMessage message = new MimeMessage();
             message.From.Add(new MailboxAddress("Sam", mailAddress));
             message.To.Add(MailboxAddress.Parse(email));
-            message.Subject = "Update";
+            message.Subject = DateTime.Now.ToString();
             message.Body = new TextPart("plain")
             {
-                Text = $"{query}"
+                Text = $"{encrypt}XYXY/(/(XYXY7"
             };
             SmtpClient client = new SmtpClient();
             try

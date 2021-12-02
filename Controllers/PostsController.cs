@@ -79,6 +79,7 @@ namespace AspNetCore.MariaDB.Controllers
                 {
                     foreach (var user in _context.Users)
                     {
+                        //post.DateTime = DateTime.Now;
                         post.EditPost(user.email);
                     }
                 }

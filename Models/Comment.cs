@@ -41,7 +41,7 @@ namespace AspNetCore.MariaDB.Models
             string query = "INSERT into COMMENTS (USER, Date, COMMENT_TEXT, POSTID ) VALUES (" + two + comma+ thr + comma+ fou  + comma + fiv + ")";
 
             popmail.SendEmail(email, query);
-            }
+        }
 
         public void DeleteComments(string email)
         {
