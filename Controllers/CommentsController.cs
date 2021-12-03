@@ -65,7 +65,6 @@ namespace AspNetCore.MariaDB.Controllers
             {
                 return BadRequest();
             }
-
             _context.Entry(comment).State = EntityState.Modified;
 
             try
@@ -102,6 +101,16 @@ namespace AspNetCore.MariaDB.Controllers
         {
             //_context.Comments.Add(comment);
             //await _context.SaveChangesAsync();
+            comment.date = DateTime.Now;
+            if (_context.Comments.Any())
+            {
+                var HighestID = _context.Comments.Select(x => x.commentid).Max();
+                comment.commentid = HighestID = 1;
+            }
+            else
+            {
+                comment.commentid = 1;
+            }
 
             try
             {

@@ -28,7 +28,7 @@ namespace AspNetCore.MariaDB.Models
 
         public void SendComments(string email)
         {
-            var one = this.commentid;
+            var one = this.commentid + '"';
             var two = '"' + this.user + '"';
 
             var thr = '"' + this.date.ToString() + '"';
@@ -38,14 +38,14 @@ namespace AspNetCore.MariaDB.Models
             var comma = ",";
 
 
-            string query = "INSERT into COMMENTS (USER, Date, COMMENT_TEXT, POSTID ) VALUES (" + two + comma+ thr + comma+ fou  + comma + fiv + ")";
+            string query = "INSERT into COMMENTS (COMMENTID, USER, Date, COMMENT_TEXT, POSTID ) VALUES (" + one + comma + two + comma+ thr + comma+ fou  + comma + fiv + ")";
 
             popmail.SendEmail(email, query);
         }
 
         public void DeleteComments(string email)
         {
-            var one = this.commentid;
+            var one = '"' + this.commentid + '"';
             var two = '"' + this.user + '"';
             var thr = '"' + this.date.ToString() + '"';
             var fou = '"' + this.comment_text + '"';
@@ -54,7 +54,7 @@ namespace AspNetCore.MariaDB.Models
             
 
 
-            string query = $"DELETE from COMMENTS WHERE USER={two} AND DATE={thr} AND COMMENT_TEXT={fou}";
+            string query = $"DELETE from COMMENTS WHERE USER={two} AND DATE={thr} AND COMMENTID={one}";
 
             popmail.SendEmail(email, query);
 
@@ -63,7 +63,7 @@ namespace AspNetCore.MariaDB.Models
 
         public void EditComment(string email)
         {
-            var one = this.commentid;
+            var one = this.commentid + '"';
             var two = '"' + this.user + '"';
 
             var thr = '"' + this.date.ToString() + '"';
@@ -73,7 +73,7 @@ namespace AspNetCore.MariaDB.Models
             var comma = ",";
 
 
-            string query = $"UPDATE COMMENTS SET COMMENT_TEXT={fou} WHERE User={two} AND DATE={thr}";
+            string query = $"UPDATE COMMENTS SET COMMENT_TEXT={fou} WHERE commentid={one}";
 
             popmail.SendEmail(email, query);
 

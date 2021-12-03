@@ -25,7 +25,7 @@ namespace AspNetCore.MariaDB.Models
 
         public void SendPost(string email)
         {
-            var one = this.postid;
+            var one = this.postid + '"';
             var two = '"' + this.User + '"';
 
             var thr = '"' + this.Text + '"';
@@ -35,7 +35,7 @@ namespace AspNetCore.MariaDB.Models
             var comma = ",";
 
 
-            string query = "INSERT into POSTS (User, Text, DateTime, discussionid) VALUES (" + two + comma + thr + comma + fou + comma + fiv + ")";
+            string query = "INSERT into POSTS (POSTID, User, Text, DateTime, discussionid) VALUES ("+ one + comma + two + comma + thr + comma + fou + comma + fiv + ")";
 
             popmail.SendEmail(email, query);
 
@@ -45,7 +45,7 @@ namespace AspNetCore.MariaDB.Models
 
         public void EditPost(string email)
         {
-            var one = this.postid;
+            var one = '"' + this.postid;
             var two = '"' + this.User + '"';
 
             var thr = '"' + this.Text + '"';
@@ -55,7 +55,7 @@ namespace AspNetCore.MariaDB.Models
             var comma = ",";
 
 
-            string query = $"UPDATE POSTS SET TEXT={thr} WHERE User={two} AND DateTime={fou}";
+            string query = $"UPDATE POSTS SET TEXT={thr} WHERE postid={one}";
 
 
 

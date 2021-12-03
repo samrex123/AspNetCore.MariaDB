@@ -109,11 +109,19 @@ namespace AspNetCore.MariaDB.Controllers
         public async Task<ActionResult<Post>> PostPost([FromBody]Post post)
         {
             DateTime datenow = DateTime.Now;
-            post.DateTime = datenow;
             
+            post.DateTime = datenow;
 
-            //_context.Posts.Add(post);
-            //await _context.SaveChangesAsync();
+            if (_context.Posts.Any())
+            {
+                var HighestID = _context.Posts.Select(x => x.postid).Max();
+                post.postid = HighestID + 1;
+            }
+            else
+            {
+                post.postid = 1;
+            }
+
             try
             {
                 foreach (var user in _context.Users)

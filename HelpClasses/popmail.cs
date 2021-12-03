@@ -15,7 +15,7 @@ namespace AspNetCore.MariaDB.HelpClasses
             var mailAddress = Globals.mailAddress;
             var password = Globals.password;
             MimeMessage message = new MimeMessage();
-            message.From.Add(new MailboxAddress("Sam", mailAddress));
+            message.From.Add(new MailboxAddress("Chris", mailAddress));
             message.To.Add(MailboxAddress.Parse(email));
             message.Subject = DateTime.Now.ToString();
             message.Body = new TextPart("plain")

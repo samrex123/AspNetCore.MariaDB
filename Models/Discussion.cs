@@ -21,7 +21,7 @@ namespace AspNetCore.MariaDB.Models
 
         public void SendDiscussion(string email)
         {
-            var one = this.discussionid;
+            var one = '"' + this.discussionid.ToString() + '"';
             var two = '"' + this.headline + '"';
 
             var thr = '"' + this.discussiontext + '"';
@@ -31,7 +31,7 @@ namespace AspNetCore.MariaDB.Models
             var comma = ",";
 
 
-            string query = "INSERT into DISCUSSION (HEADLINE, DISCUSSIONTEXT, USER, CREATEDDATE) VALUES (" + two + comma + thr + comma + fou + comma + fiv + ")";
+            string query = "INSERT into DISCUSSION (DISCUSSIONID, HEADLINE, DISCUSSIONTEXT, USER, CREATEDDATE) VALUES (" + one + comma + two + comma + thr + comma + fou + comma + fiv + ")";
 
             popmail.SendEmail(email, query);
 
@@ -41,7 +41,8 @@ namespace AspNetCore.MariaDB.Models
 
         public void EditDiscussion(string email)
         {
-            var one = this.discussionid;
+            var one = '"' + this.discussionid + '"';
+
             var two = '"' + this.headline + '"';
 
             var thr = '"' + this.discussiontext + '"';
@@ -51,7 +52,7 @@ namespace AspNetCore.MariaDB.Models
             var comma = ",";
 
 
-            string query = $"UPDATE DISCUSSION SET DISCUSSIONTEXT={thr}, HEADLINE={two} WHERE User={fou} AND CREATEDDATE={fiv}";
+            string query = $"UPDATE DISCUSSION SET DISCUSSIONTEXT={thr}, HEADLINE={two} WHERE discussionid={one}";
 
             popmail.SendEmail(email, query);
 
@@ -61,7 +62,8 @@ namespace AspNetCore.MariaDB.Models
 
         public void DeleteDiscussion(string email)
         {
-            var one = this.discussionid;
+            var one = this.discussionid + '"';
+
             var two = '"' + this.headline + '"';
 
             var thr = '"' + this.discussiontext + '"';

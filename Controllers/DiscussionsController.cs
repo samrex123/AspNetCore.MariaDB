@@ -113,8 +113,16 @@ namespace AspNetCore.MariaDB.Controllers
         public async Task<ActionResult<Discussion>> PostDiscussion([FromBody]Discussion discussion)
         {
             discussion.createddate = DateTime.Now;
-            //_context.Discussion.Add(discussion);
-            //await _context.SaveChangesAsync();
+            if (_context.Discussion.Any())
+            {
+                var HighestID = _context.Discussion.Select(x => x.discussionid).Max();
+                discussion.discussionid = HighestID + 1;
+            }
+            else
+            {
+                discussion.discussionid = 1;
+            }
+          
 
             try
             {
