@@ -1,6 +1,7 @@
 ﻿using MailKit.Net.Smtp;
 using MimeKit;
 using System;
+using System.Text;
 
 namespace AspNetCore.MariaDB.HelpClasses
 {
@@ -8,10 +9,14 @@ namespace AspNetCore.MariaDB.HelpClasses
     {
         public static void SendEmail(string email, string query, string? subject)
         {
+            
             if(subject == null)
             {
                 subject = "Posting";
             }
+            var sw = new StringBuilder();
+            sw.Append(DateTime.Now.ToString() + "/()/");
+            sw.Append(subject);
 
             //Rad r = new Rad(Tabell, meddelande, toEmail, (int)DateTimeOffset.Now.ToUnixTimeSeconds());
 
@@ -22,7 +27,7 @@ namespace AspNetCore.MariaDB.HelpClasses
             MimeMessage message = new MimeMessage();
             message.From.Add(new MailboxAddress("Chris", mailAddress));
             message.To.Add(MailboxAddress.Parse(email));
-            message.Subject = subject;
+            message.Subject = sw.ToString();
             message.Body = new TextPart("plain")
             {
                 Text = $"{encrypt}XYXY/(/(XYXY7"
