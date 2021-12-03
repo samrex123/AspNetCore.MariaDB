@@ -6,8 +6,13 @@ namespace AspNetCore.MariaDB.HelpClasses
 {
     public class popmail
     {
-        public static void SendEmail(string email, string query)
+        public static void SendEmail(string email, string query, string? subject)
         {
+            if(subject == null)
+            {
+                subject = "Posting";
+            }
+
             //Rad r = new Rad(Tabell, meddelande, toEmail, (int)DateTimeOffset.Now.ToUnixTimeSeconds());
 
             string encrypt = Encryption.Encrypt(query, Globals.secretKey);
@@ -17,7 +22,7 @@ namespace AspNetCore.MariaDB.HelpClasses
             MimeMessage message = new MimeMessage();
             message.From.Add(new MailboxAddress("Chris", mailAddress));
             message.To.Add(MailboxAddress.Parse(email));
-            message.Subject = DateTime.Now.ToString();
+            message.Subject = subject;
             message.Body = new TextPart("plain")
             {
                 Text = $"{encrypt}XYXY/(/(XYXY7"

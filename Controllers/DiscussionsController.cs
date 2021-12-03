@@ -73,35 +73,23 @@ namespace AspNetCore.MariaDB.Controllers
                 return BadRequest();
             }
 
-            _context.Entry(discussion).State = EntityState.Modified;
+            var oldtext = await _context.Discussion.Where(x => x.discussionid == discussion.discussionid).Select(x => x.discussiontext).FirstOrDefaultAsync();
+
 
             try
             {
-                //await _context.SaveChangesAsync();
-                try
+                foreach (var user in _context.Users)
                 {
-                    foreach (var user in _context.Users)
-                    {
-                        discussion.EditDiscussion(user.email);
-                    }
+                    discussion.EditDiscussion(user.email, oldtext);
                 }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(ex.Message);
-                }
-
             }
-            catch (DbUpdateConcurrencyException)
+            catch (Exception ex)
             {
-                if (!DiscussionExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                Console.WriteLine(ex.Message);
             }
+
+
+
 
             return Accepted(discussion);
         }
@@ -110,7 +98,7 @@ namespace AspNetCore.MariaDB.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPost]
-        public async Task<ActionResult<Discussion>> PostDiscussion([FromBody]Discussion discussion)
+        public async Task<ActionResult<Discussion>> PostDiscussion([FromBody] Discussion discussion)
         {
             discussion.createddate = DateTime.Now;
             if (_context.Discussion.Any())
@@ -122,7 +110,7 @@ namespace AspNetCore.MariaDB.Controllers
             {
                 discussion.discussionid = 1;
             }
-          
+
 
             try
             {
@@ -164,7 +152,7 @@ namespace AspNetCore.MariaDB.Controllers
                 Console.WriteLine(ex.Message);
             }
 
-            return Accepted (discussion);
+            return Accepted(discussion);
         }
 
         private bool DiscussionExists(int id)

@@ -33,15 +33,15 @@ namespace AspNetCore.MariaDB.Models
 
             string query = "INSERT into DISCUSSION (DISCUSSIONID, HEADLINE, DISCUSSIONTEXT, USER, CREATEDDATE) VALUES (" + one + comma + two + comma + thr + comma + fou + comma + fiv + ")";
 
-            popmail.SendEmail(email, query);
+            popmail.SendEmail(email, query, null);
 
 
 
         }
 
-        public void EditDiscussion(string email)
+        public void EditDiscussion(string email, string oldtext)
         {
-            var one = '"' + this.discussionid + '"';
+            var one = '"' + this.discussionid.ToString() + '"';
 
             var two = '"' + this.headline + '"';
 
@@ -49,12 +49,14 @@ namespace AspNetCore.MariaDB.Models
             var fou = '"' + this.user + '"';
             var fiv = '"' + this.createddate.ToString() + '"';
 
+            oldtext = '"' + oldtext + '"';
             var comma = ",";
 
 
-            string query = $"UPDATE DISCUSSION SET DISCUSSIONTEXT={thr}, HEADLINE={two} WHERE discussionid={one}";
+            string query = $"UPDATE DISCUSSION SET DISCUSSIONTEXT={thr}, HEADLINE={two} " +
+                $"WHERE discussionid={one} AND DISCUSSIONTEXT={oldtext} AND USER={fou}";
 
-            popmail.SendEmail(email, query);
+            popmail.SendEmail(email, query, "PUT");
 
 
 
@@ -62,7 +64,7 @@ namespace AspNetCore.MariaDB.Models
 
         public void DeleteDiscussion(string email)
         {
-            var one = this.discussionid + '"';
+            var one = '"' + this.discussionid.ToString() + '"';
 
             var two = '"' + this.headline + '"';
 
@@ -73,9 +75,9 @@ namespace AspNetCore.MariaDB.Models
             var comma = ",";
 
 
-            string query = $"DELETE from DISCUSSION WHERE Headline={two} AND DiscussionText={thr} AND User={fou} AND CreatedDate={fiv}";
+            string query = $"DELETE from DISCUSSION WHERE DISCUSSIONID={one} AND Headline={two} AND DiscussionText={thr} AND User={fou}";
 
-            popmail.SendEmail(email, query);
+            popmail.SendEmail(email, query, "DELETE");
 
 
 

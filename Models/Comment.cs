@@ -28,7 +28,7 @@ namespace AspNetCore.MariaDB.Models
 
         public void SendComments(string email)
         {
-            var one = this.commentid + '"';
+            var one = '"' + this.commentid.ToString() + '"';
             var two = '"' + this.user + '"';
 
             var thr = '"' + this.date.ToString() + '"';
@@ -40,12 +40,12 @@ namespace AspNetCore.MariaDB.Models
 
             string query = "INSERT into COMMENTS (COMMENTID, USER, Date, COMMENT_TEXT, POSTID ) VALUES (" + one + comma + two + comma+ thr + comma+ fou  + comma + fiv + ")";
 
-            popmail.SendEmail(email, query);
+            popmail.SendEmail(email, query, null);
         }
 
         public void DeleteComments(string email)
         {
-            var one = '"' + this.commentid + '"';
+            var one = '"' + this.commentid.ToString() + '"';
             var two = '"' + this.user + '"';
             var thr = '"' + this.date.ToString() + '"';
             var fou = '"' + this.comment_text + '"';
@@ -54,28 +54,31 @@ namespace AspNetCore.MariaDB.Models
             
 
 
-            string query = $"DELETE from COMMENTS WHERE USER={two} AND DATE={thr} AND COMMENTID={one}";
+            string query = $"DELETE from COMMENTS WHERE COMMENTID={one} AND user={two} AND COMMENT_TEXT={fou}";
+            
 
-            popmail.SendEmail(email, query);
+            popmail.SendEmail(email, query, "DELETE");
 
         }
         
 
-        public void EditComment(string email)
+        public void EditComment(string email, string oldcommenttext)
         {
-            var one = this.commentid + '"';
+            var one = '"' + this.commentid.ToString() + '"';
             var two = '"' + this.user + '"';
 
             var thr = '"' + this.date.ToString() + '"';
             var fou = '"' + this.comment_text + '"';
             var fiv = this.postid;
 
+            oldcommenttext = '"' + oldcommenttext + '"';
+
             var comma = ",";
 
 
-            string query = $"UPDATE COMMENTS SET COMMENT_TEXT={fou} WHERE commentid={one}";
+            string query = $"UPDATE COMMENTS SET COMMENT_TEXT={fou}, date={thr} WHERE commentid={one} AND COMMENT_TEXT={oldcommenttext}";
 
-            popmail.SendEmail(email, query);
+            popmail.SendEmail(email, query, "PUT");
 
 
 

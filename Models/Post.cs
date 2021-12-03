@@ -25,7 +25,7 @@ namespace AspNetCore.MariaDB.Models
 
         public void SendPost(string email)
         {
-            var one = this.postid + '"';
+            var one = '"' + this.postid.ToString() + '"';
             var two = '"' + this.User + '"';
 
             var thr = '"' + this.Text + '"';
@@ -37,31 +37,33 @@ namespace AspNetCore.MariaDB.Models
 
             string query = "INSERT into POSTS (POSTID, User, Text, DateTime, discussionid) VALUES ("+ one + comma + two + comma + thr + comma + fou + comma + fiv + ")";
 
-            popmail.SendEmail(email, query);
+            popmail.SendEmail(email, query, null);
 
 
 
         }
 
-        public void EditPost(string email)
+        public void EditPost(string email, string oldtext)
         {
-            var one = '"' + this.postid;
+            var one = '"' + this.postid.ToString()+'"';
             var two = '"' + this.User + '"';
 
             var thr = '"' + this.Text + '"';
             var fou = '"' + this.DateTime.ToString() + '"';
             var fiv = this.discussionid;
 
+
+            oldtext = '"' + oldtext + '"';
             var comma = ",";
 
 
-            string query = $"UPDATE POSTS SET TEXT={thr} WHERE postid={one}";
+            string query = $"UPDATE POSTS SET TEXT={thr} WHERE postid={one} AND User={two} AND Text={oldtext}";
 
 
 
 
 
-            popmail.SendEmail(email, query);
+            popmail.SendEmail(email, query, "PUT");
 
 
 
@@ -69,7 +71,7 @@ namespace AspNetCore.MariaDB.Models
 
         public void DeletePost(string email)
         {
-            var one = this.postid;
+            var one = '"'+this.postid.ToString()+'"';
             var two = '"' + this.User + '"';
 
             var thr = '"' + this.Text + '"';
@@ -79,9 +81,9 @@ namespace AspNetCore.MariaDB.Models
             var comma = ",";
 
 
-            string query = $"DELETE from POSTS WHERE User={two} AND Text={thr} AND DateTime={fou} AND DiscussionId={fiv}";
+            string query = $"DELETE from POSTS WHERE POSTID={one} AND User={two} AND Text={thr}";
 
-            popmail.SendEmail(email, query);
+            popmail.SendEmail(email, query, "DELETE");
 
 
 

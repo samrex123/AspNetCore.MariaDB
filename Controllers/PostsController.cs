@@ -69,35 +69,27 @@ namespace AspNetCore.MariaDB.Controllers
                 return BadRequest();
             }
 
-            
-            _context.Entry(post).State = EntityState.Modified;
+            var oldtext = await _context.Posts.Where(x => x.postid == post.postid).Select(x => x.Text).FirstOrDefaultAsync();
+
 
             try
             {
-                //await _context.SaveChangesAsync();
-                try
+                foreach (var user in _context.Users)
                 {
-                    foreach (var user in _context.Users)
-                    {
-                        post.EditPost(user.email);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(ex.Message);
+                    post.EditPost(user.email, oldtext);
                 }
             }
-            catch (DbUpdateConcurrencyException)
+            catch (Exception ex)
             {
-                if (!PostExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                Console.WriteLine(ex.Message);
             }
+            
+
+            if (!PostExists(id))
+            {
+                return NotFound();
+            }
+       
 
             return Accepted(post);
         }

@@ -65,29 +65,19 @@ namespace AspNetCore.MariaDB.Controllers
             {
                 return BadRequest();
             }
-            _context.Entry(comment).State = EntityState.Modified;
+            ///hittar gammla texten för att skicka med och hitta den unika kommentaren
+            var oldcommentText = _context.Comments.Where(x => x.commentid == comment.commentid).Select(x => x.comment_text).FirstOrDefault();
 
             try
             {
-                await _context.SaveChangesAsync();
-                try
+                foreach (var user in _context.Users)
                 {
-                    foreach (var user in _context.Users)
-                    {
-                        comment.EditComment(user.email);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(ex.Message);
+                    comment.EditComment(user.email, oldcommentText);
                 }
             }
-            catch (DbUpdateConcurrencyException)
+            catch (Exception ex)
             {
-
-                {
-                    throw;
-                }
+                Console.WriteLine(ex.Message);
             }
 
             return Accepted(comment);
@@ -132,20 +122,14 @@ namespace AspNetCore.MariaDB.Controllers
         public async Task<ActionResult<Comment>> DeleteComment(int? id)
         {
             var comment = await _context.Comments.FindAsync(id);
+
             if (comment == null)
             {
                 return NotFound();
             }
 
-            
-
-            
-
             try
             {
-                //_context.Comments.Remove(comment);
-                //await _context.SaveChangesAsync();
-
                 foreach (var user in _context.Users)
                 {
                     comment.DeleteComments(user.email);
@@ -159,11 +143,6 @@ namespace AspNetCore.MariaDB.Controllers
             return Accepted(comment);
 
         }
-
-
-
-
-
 
 
         private bool CommentExists(int? id)
