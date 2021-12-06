@@ -42,46 +42,30 @@ namespace AspNetCore.MariaDB.Models
         public void EditDiscussion(string email, string oldtext)
         {
             var one = '"' + this.discussionid.ToString() + '"';
-
             var two = '"' + this.headline + '"';
-
             var thr = '"' + this.discussiontext + '"';
             var fou = '"' + this.user + '"';
             var fiv = '"' + this.createddate.ToString() + '"';
 
             oldtext = '"' + oldtext + '"';
-            var comma = ",";
-
 
             string query = $"UPDATE DISCUSSION SET DISCUSSIONTEXT={thr}, HEADLINE={two} " +
                 $"WHERE discussionid={one} AND DISCUSSIONTEXT={oldtext} AND USER={fou}";
 
             popmail.SendEmail(email, query, "PUT");
-
-
-
         }
 
         public void DeleteDiscussion(string email)
         {
             var one = '"' + this.discussionid.ToString() + '"';
-
             var two = '"' + this.headline + '"';
-
             var thr = '"' + this.discussiontext + '"';
             var fou = '"' + this.user + '"';
             var fiv = '"' + this.createddate.ToString() + '"';
 
-            var comma = ",";
-
-
             string query = $"DELETE from DISCUSSION WHERE DISCUSSIONID={one} AND Headline={two} AND DiscussionText={thr} AND User={fou}";
 
             popmail.SendEmail(email, query, "DELETE");
-
-
-
         }
-
     }
 }

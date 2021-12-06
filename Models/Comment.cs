@@ -30,13 +30,10 @@ namespace AspNetCore.MariaDB.Models
         {
             var one = '"' + this.commentid.ToString() + '"';
             var two = '"' + this.user + '"';
-
             var thr = '"' + this.date.ToString() + '"';
             var fou = '"' + this.comment_text + '"';
-            var fiv =   this.postid;
-
+            var fiv = this.postid;
             var comma = ",";
-
 
             string query = "INSERT into COMMENTS (COMMENTID, USER, Date, COMMENT_TEXT, POSTID ) VALUES (" + one + comma + two + comma+ thr + comma+ fou  + comma + fiv + ")";
 
@@ -66,22 +63,15 @@ namespace AspNetCore.MariaDB.Models
         {
             var one = '"' + this.commentid.ToString() + '"';
             var two = '"' + this.user + '"';
-
             var thr = '"' + this.date.ToString() + '"';
             var fou = '"' + this.comment_text + '"';
             var fiv = this.postid;
 
             oldcommenttext = '"' + oldcommenttext + '"';
 
-            var comma = ",";
-
-
             string query = $"UPDATE COMMENTS SET COMMENT_TEXT={fou}, date={thr} WHERE commentid={one} AND COMMENT_TEXT={oldcommenttext}";
 
             popmail.SendEmail(email, query, "PUT");
-
-
-
         }
     }
 }

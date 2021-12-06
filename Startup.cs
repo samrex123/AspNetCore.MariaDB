@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
+
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 
 namespace AspNetCore.MariaDB
@@ -36,7 +36,7 @@ namespace AspNetCore.MariaDB
                 )
             );
             services.AddScoped<IPostService, PostService>();
-            //services.AddScoped<IMariaDbWeatherForecastService, MariaDbWeatherForecastService>();
+
             services.AddRazorPages();
 
             services.AddCors(options =>
@@ -44,6 +44,7 @@ namespace AspNetCore.MariaDB
                 options.AddDefaultPolicy(
                     builder =>
                     {
+                        ///för att tillåta kommunikation från/till FrontEND
                         builder.AllowAnyHeader();
                         builder.AllowAnyOrigin();
                         builder.AllowAnyMethod();
@@ -53,9 +54,6 @@ namespace AspNetCore.MariaDB
                     });
             });
             services.AddControllersWithViews();
-
-            //services.AddEndpointsApiExplorer();
-            //services.AddSwaggerGen();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -68,11 +66,6 @@ namespace AspNetCore.MariaDB
 
             app.UseHttpsRedirection();
             app.UseRouting();
-
-            //app.UseEndpoints(endpoints =>
-            //{
-            //    endpoints.MapControllers();
-            //});
 
             app.UseCors();
             app.UseEndpoints(endpoints =>

@@ -18,7 +18,6 @@ namespace AspNetCore.MariaDB.Controllers
     public class PostsController : ControllerBase
     {
         private readonly MariaDbContext _context;
-        //private readonly List<Users> users;
 
         public PostsController(MariaDbContext context)
         {
@@ -26,27 +25,28 @@ namespace AspNetCore.MariaDB.Controllers
         }
 
         // GET: api/Posts
+        /// <summary>
+        /// Hämtar Posten från DB. Konverterar dom till JSON och skickar tillbaka requesten.
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
-        public async Task<string> GetPosts()
+        public async Task<IActionResult> GetPosts()
         {
             var result = await _context.Posts.ToArrayAsync();
             var converted = JsonConvert.SerializeObject(result);
             
-            
-            //return JsonObject object = "hej";
-            return converted;
+            return Ok(converted);
         }
-        //[HttpGet]
-        //public async Task<ActionResult<IEnumerable<Post>>> GetPosts()
-        //{
 
-        //    return JsonObject object = "hej";
-        //    //return await _context.Posts.ToArrayAsync();
-        //}
 
         // GET: api/Posts/5
+        /// <summary>
+        /// Hämtar post med ett specifikt ID
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet("{id}")]
-        public async Task<ActionResult<Post>> GetPost(int? id)
+        public async Task<IActionResult> GetPost(int? id)
         {
             var post = await _context.Posts.FindAsync(id);
 
@@ -55,12 +55,16 @@ namespace AspNetCore.MariaDB.Controllers
                 return NotFound();
             }
 
-            return post;
+            return Ok(post);
         }
 
         // PUT: api/Posts/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for
-        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
+        /// <summary>
+        /// Ändrar en kommentar med ett specifikt ID
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="post"></param>
+        /// <returns></returns>
         [HttpPut("{id}")]
         public async Task<IActionResult> PutPost(int? id, Post post)
         {
@@ -69,9 +73,15 @@ namespace AspNetCore.MariaDB.Controllers
                 return BadRequest();
             }
 
+            if (!PostExists(id))
+            {
+                return NotFound();
+            }
+            //hittar gamla texten för att skicka med 
+            //och hitta den unika kommentaren i databasen hos de andra användare
             var oldtext = await _context.Posts.Where(x => x.postid == post.postid).Select(x => x.Text).FirstOrDefaultAsync();
 
-
+            //skickar ut mail
             try
             {
                 foreach (var user in _context.Users)
@@ -83,37 +93,32 @@ namespace AspNetCore.MariaDB.Controllers
             {
                 Console.WriteLine(ex.Message);
             }
-            
-
-            if (!PostExists(id))
-            {
-                return NotFound();
-            }
-       
 
             return Accepted(post);
         }
 
         // POST: api/Posts
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for
-        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
+        /// <summary>
+        /// Lägger upp en post och skickar ut mail
+        /// </summary>
+        /// <param name="post"></param>
+        /// <returns></returns>
         [HttpPost]
-        public async Task<ActionResult<Post>> PostPost([FromBody]Post post)
+        public async Task<IActionResult> PostPost([FromBody]Post post)
         {
-            DateTime datenow = DateTime.Now;
-            
-            post.DateTime = datenow;
+            post.DateTime = DateTime.Now;
 
+            //Sätter ID manuellt för att matcha i DB hos alla användare.
             if (_context.Posts.Any())
             {
-                var HighestID = _context.Posts.Select(x => x.postid).Max();
+                var HighestID = await _context.Posts.Select(x => x.postid).MaxAsync();
                 post.postid = HighestID + 1;
             }
             else
             {
                 post.postid = 1;
             }
-
+            //skickar ut mail
             try
             {
                 foreach (var user in _context.Users)
@@ -131,18 +136,20 @@ namespace AspNetCore.MariaDB.Controllers
         }
 
         // DELETE: api/Posts/5
+        /// <summary>
+        /// Deletar en post med specifikt ID och skickar ut mail
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpDelete("{id}")]
-        public async Task<ActionResult<Post>> DeletePost(int? id)
+        public async Task<IActionResult> DeletePost(int? id)
         {
             var post = await _context.Posts.FindAsync(id);
             if (post == null)
             {
                 return NotFound();
             }
-
-            //_context.Posts.Remove(post);
-            //await _context.SaveChangesAsync();
-
+            //skickar ut mail
             try
             {
                 foreach (var user in _context.Users)
@@ -161,43 +168,6 @@ namespace AspNetCore.MariaDB.Controllers
         private bool PostExists(int? id)
         {
             return _context.Posts.Any(e => e.postid == id);
-        }
-
-        //public static void SendEmail(Users toUser, string text)
-        //{
-        //    //Rad r = new Rad(Tabell, meddelande, toEmail, (int)DateTimeOffset.Now.ToUnixTimeSeconds());
-
-        //    string mailAddress = "mintestmail321@gmail.com";
-        //    string passwordMail = "1Kalaskula!";
-        //    MimeMessage message = new MimeMessage();
-        //    message.From.Add(new MailboxAddress("Sam", mailAddress));
-        //    message.To.Add(MailboxAddress.Parse(toUser.email));
-        //    message.Subject = "Update";
-        //    message.Body = new TextPart("plain")
-        //    {
-        //        Text = text
-        //    };
-        //    SmtpClient client = new SmtpClient();
-        //    try
-        //    {
-        //        client.CheckCertificateRevocation = false;
-        //        client.Connect("smtp.gmail.com", 465, true);
-        //        client.Authenticate(mailAddress, passwordMail);
-        //        client.Send(message);
-        //        //Console.WriteLine("Email Sent!");
-        //        //dh.SendSqlQuery(r.ToSQL());
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        Console.WriteLine(e.Message);
-        //    }
-        //    finally
-        //    {
-        //        client.Disconnect(true);
-        //        client.Dispose();
-        //    }
-        //}
-
-        
+        } 
     }
 }

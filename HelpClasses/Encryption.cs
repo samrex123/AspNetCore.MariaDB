@@ -7,6 +7,12 @@ namespace AspNetCore.MariaDB.HelpClasses
 {
     public class Encryption
     {
+        /// <summary>
+        /// Krypterar text
+        /// </summary>
+        /// <param name="clearText">Texten som ska krypteras</param>
+        /// <param name="secretkey">Nyckel som används för kryptering</param>
+        /// <returns></returns>
         public static string Encrypt(string clearText, string secretkey)
         {
             string EncryptionKey = secretkey;

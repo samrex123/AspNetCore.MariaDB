@@ -1,4 +1,6 @@
-﻿using MailKit.Net.Smtp;
+﻿using AspNetCore.MariaDB.Models;
+using AspNetCore.MariaDB.Persistence;
+using MailKit.Net.Smtp;
 using MimeKit;
 using System;
 using System.Text;
@@ -7,10 +9,16 @@ namespace AspNetCore.MariaDB.HelpClasses
 {
     public class popmail
     {
+        /// <summary>
+        /// Krypterar och struktuerar upp för mailutskick
+        /// </summary>
+        /// <param name="email"></param>
+        /// <param name="query"></param>
+        /// <param name="subject"></param>
         public static void SendEmail(string email, string query, string? subject)
         {
-            
-            if(subject == null)
+
+            if (subject == null)
             {
                 subject = "Posting";
             }
@@ -18,14 +26,12 @@ namespace AspNetCore.MariaDB.HelpClasses
             sw.Append(DateTime.Now.ToString() + "/()/");
             sw.Append(subject);
 
-            //Rad r = new Rad(Tabell, meddelande, toEmail, (int)DateTimeOffset.Now.ToUnixTimeSeconds());
-
             string encrypt = Encryption.Encrypt(query, Globals.secretKey);
 
             var mailAddress = Globals.mailAddress;
             var password = Globals.password;
             MimeMessage message = new MimeMessage();
-            message.From.Add(new MailboxAddress("Chris", mailAddress));
+            message.From.Add(new MailboxAddress("Jonatan", mailAddress));
             message.To.Add(MailboxAddress.Parse(email));
             message.Subject = sw.ToString();
             message.Body = new TextPart("plain")
@@ -52,5 +58,6 @@ namespace AspNetCore.MariaDB.HelpClasses
                 client.Dispose();
             }
         }
+
     }
 }

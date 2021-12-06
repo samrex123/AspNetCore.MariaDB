@@ -25,21 +25,28 @@ namespace AspNetCore.MariaDB.Controllers
         }
 
         // GET: api/Discussions
+        /// <summary>
+        /// Hämtar Discussionen från DB. Konverterar dom till JSON och skickar tillbaka requesten.
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
-        public async Task<string> GetDiscussion()
-
+        public async Task<IActionResult> GetDiscussion()
         {
+            var listaDiscussion = await _context.Discussion.ToListAsync();
+            var converted = JsonConvert.SerializeObject(listaDiscussion);
 
-            var lsita = await _context.Discussion.ToListAsync();
-
-            var converted = JsonConvert.SerializeObject(lsita);
-
-            return converted;
+            return Ok(converted);
         }
 
         // GET: api/Discussions/5
+        /// <summary>
+        /// Hämtar information på ett specifikt ID. 
+        /// görs om till en DTO och skickar tillbaka med extra information
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet("{id}")]
-        public async Task<ActionResult<DiscussionDTO>> GetDiscussion(int id)
+        public async Task<IActionResult> GetDiscussion(int id)
         {
             var discussion = await _context.Discussion.FindAsync(id);
 
@@ -47,8 +54,9 @@ namespace AspNetCore.MariaDB.Controllers
             {
                 return NotFound();
             }
-
             var postlist = await _context.Posts.Where(x => x.discussionid == id).ToListAsync();
+
+            // Sätter extra fältet till null för att skapa en DTO
             foreach (var item in postlist)
             {
                 item.Discussion = null;
@@ -56,15 +64,16 @@ namespace AspNetCore.MariaDB.Controllers
 
             var dto = new DiscussionDTO(discussion, postlist);
 
-            //var listDiscussionPosts = new List<object>();
-            //listDiscussionPosts.Add(discussion);
-
-            return dto;
+            return Ok(dto);
         }
 
         // PUT: api/Discussions/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for
-        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
+        /// <summary>
+        /// Ändrar en discussion
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="discussion"></param>
+        /// <returns></returns>
         [HttpPut("{id}")]
         public async Task<IActionResult> PutDiscussion(int id, Discussion discussion)
         {
@@ -72,10 +81,17 @@ namespace AspNetCore.MariaDB.Controllers
             {
                 return BadRequest();
             }
+            if (!DiscussionExists(id))
+            {
+                return NotFound();
+            }
 
-            var oldtext = await _context.Discussion.Where(x => x.discussionid == discussion.discussionid).Select(x => x.discussiontext).FirstOrDefaultAsync();
-
-
+            //hittar gamla texten för att skicka med 
+            //och hitta den unika kommentaren i databasen hos de andra användare
+            var oldtext = await _context.Discussion.Where(x => x.discussionid == discussion.discussionid)
+                                                    .Select(x => x.discussiontext)
+                                                    .FirstOrDefaultAsync();
+            //skickar ut mail
             try
             {
                 foreach (var user in _context.Users)
@@ -88,22 +104,24 @@ namespace AspNetCore.MariaDB.Controllers
                 Console.WriteLine(ex.Message);
             }
 
-
-
-
             return Accepted(discussion);
         }
 
         // POST: api/Discussions
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for
-        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
+        /// <summary>
+        /// Lägger upp en discussion och skickar ut mail
+        /// </summary>
+        /// <param name="discussion"></param>
+        /// <returns></returns>
         [HttpPost]
-        public async Task<ActionResult<Discussion>> PostDiscussion([FromBody] Discussion discussion)
+        public async Task<IActionResult> PostDiscussion([FromBody] Discussion discussion)
         {
             discussion.createddate = DateTime.Now;
+
+            //Sätter ID manuellt för att matcha i DB hos alla användare.
             if (_context.Discussion.Any())
             {
-                var HighestID = _context.Discussion.Select(x => x.discussionid).Max();
+                var HighestID =  await _context.Discussion.Select(x => x.discussionid).MaxAsync();
                 discussion.discussionid = HighestID + 1;
             }
             else
@@ -111,7 +129,7 @@ namespace AspNetCore.MariaDB.Controllers
                 discussion.discussionid = 1;
             }
 
-
+            //skickar ut mail
             try
             {
                 foreach (var user in _context.Users)
@@ -128,18 +146,20 @@ namespace AspNetCore.MariaDB.Controllers
         }
 
         // DELETE: api/Discussions/5
+        /// <summary>
+        /// Tar bort discussionen med ett specifikt ID
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpDelete("{id}")]
-        public async Task<ActionResult<Discussion>> DeleteDiscussion(int id)
+        public async Task<IActionResult> DeleteDiscussion(int id)
         {
             var discussion = await _context.Discussion.FindAsync(id);
             if (discussion == null)
             {
                 return NotFound();
             }
-
-            //_context.Discussion.Remove(discussion);
-            //await _context.SaveChangesAsync();
-
+            //skickar ut mail
             try
             {
                 foreach (var user in _context.Users)
@@ -154,8 +174,7 @@ namespace AspNetCore.MariaDB.Controllers
 
             return Accepted(discussion);
         }
-
-        private bool DiscussionExists(int id)
+        private bool DiscussionExists(int? id)
         {
             return _context.Discussion.Any(e => e.discussionid == id);
         }

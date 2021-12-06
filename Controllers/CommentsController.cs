@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using AspNetCore.MariaDB.Models;
@@ -23,41 +21,47 @@ namespace AspNetCore.MariaDB.Controllers
         }
 
         // GET: api/Comments
+        /// <summary>
+        /// Hämtar kommentarer från DB. Konverterar dom till JSON och skickar tillbaka requesten.
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
-        public async Task<string> GetComments()
+        public async Task<IActionResult> GetComments()
         {
-
-
-            //var lista = await _context.Comments.Where(x => x.postid == 1).Include(x => x.post).Where(x => x.post.discussionid == 1).Include(x => x.post.Discussion).ToListAsync();
             var lista = await _context.Comments.ToListAsync();
             var converted = JsonConvert.SerializeObject(lista);
 
-
-
-            return converted;
+            return Ok(converted);
         }
 
         // GET: api/Comments/5
+        /// <summary>
+        /// Hämtar information på ett specifikt ID
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet("{id}")]
-        public async Task<string> GetComment(int? id)
+        public async Task<IActionResult> GetComment(int? id)
         {
 
             var comment = await _context.Comments.Where(x => x.postid == id).ToListAsync();
+            if (comment == null)
+            {
+                return NotFound();
+            }
 
             var converted = JsonConvert.SerializeObject(comment);
 
-            if (comment == null)
-            {
-                string notfound = "notfound";
-                return notfound;
-            }
-
-            return converted;
+            return Ok(converted);
         }
 
         // PUT: api/Comments
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for
-        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
+        /// <summary>
+        /// Ändrar en kommentar
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="comment"></param>
+        /// <returns></returns>
         [HttpPut("{id}")]
         public async Task<IActionResult> PutComment(int id, [FromBody]Comment comment)
         {
@@ -65,9 +69,17 @@ namespace AspNetCore.MariaDB.Controllers
             {
                 return BadRequest();
             }
-            ///hittar gammla texten för att skicka med och hitta den unika kommentaren
-            var oldcommentText = _context.Comments.Where(x => x.commentid == comment.commentid).Select(x => x.comment_text).FirstOrDefault();
+            if (!CommentExists(id))
+            {
+                return NotFound();
+            }
 
+            //hittar gamla texten för att skicka med 
+            //och hitta den unika kommentaren i databasen hos de andra användare
+            var oldcommentText = await _context.Comments.Where(x => x.commentid == comment.commentid)
+                                                    .Select(x => x.comment_text)
+                                                    .FirstOrDefaultAsync();
+            //Skickar ut mailen
             try
             {
                 foreach (var user in _context.Users)
@@ -84,24 +96,27 @@ namespace AspNetCore.MariaDB.Controllers
         }
 
         // POST: api/Comments
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for
-        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
+        /// <summary>
+        /// Lägger upp en kommentar och skickar ut mail
+        /// </summary>
+        /// <param name="comment"></param>
+        /// <returns></returns>
         [HttpPost]
-        public async Task<ActionResult<Comment>> PostComment([FromBody] Comment comment)
+        public async Task<IActionResult> PostComment([FromBody] Comment comment)
         {
-            //_context.Comments.Add(comment);
-            //await _context.SaveChangesAsync();
             comment.date = DateTime.Now;
+
+            //För att matcha ID i alla Databaser så sätts den manuellt.
             if (_context.Comments.Any())
             {
-                var HighestID = _context.Comments.Select(x => x.commentid).Max();
-                comment.commentid = HighestID = 1;
+                var HighestID = await _context.Comments.Select(x => x.commentid).MaxAsync();
+                comment.commentid = HighestID + 1;
             }
             else
             {
                 comment.commentid = 1;
             }
-
+            //skickar ut mail
             try
             {
                 foreach (var user in _context.Users)
@@ -118,8 +133,13 @@ namespace AspNetCore.MariaDB.Controllers
         }
 
         // DELETE: api/Comments/5
+        /// <summary>
+        /// Tar bort kommentar med ett specifikt ID
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpDelete("{id}")]
-        public async Task<ActionResult<Comment>> DeleteComment(int? id)
+        public async Task<IActionResult> DeleteComment(int? id)
         {
             var comment = await _context.Comments.FindAsync(id);
 
@@ -127,7 +147,7 @@ namespace AspNetCore.MariaDB.Controllers
             {
                 return NotFound();
             }
-
+            //skickar ut mail
             try
             {
                 foreach (var user in _context.Users)
@@ -141,10 +161,7 @@ namespace AspNetCore.MariaDB.Controllers
             }
 
             return Accepted(comment);
-
         }
-
-
         private bool CommentExists(int? id)
         {
             return _context.Comments.Any(e => e.commentid == id);
