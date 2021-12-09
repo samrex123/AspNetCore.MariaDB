@@ -34,6 +34,10 @@ How to encrypt text.<br>
 Using mail for communication between users.
 
 <b>DOCUMENTATION</b>
+ 
+<b>Installation</b><br>
+ <b>Pre install:</b> Need a MySql-compatible database and a gmail-account<br>
+Download the code. Change the varibles in globals to match your system.<br>
 
 <b>Database structure</b><br>
 ![image](https://user-images.githubusercontent.com/48559023/145374531-1f49bc2b-eb95-4530-9ef3-dd22bd2af57c.png)<br>
