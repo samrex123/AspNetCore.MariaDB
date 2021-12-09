@@ -44,7 +44,7 @@ The users in our DB is the ones whom will sync their database with the mailservi
 
 <b>API</b><br>
 The API is for CRUD operations in the database.
-And each model-item has ints own controller.<br>
+Each model-item has its own controller.<br>
 
 <b>HttpGet("/api/[controller]")</b><br>
 ![image](https://user-images.githubusercontent.com/48559023/145376247-28e9c2b0-15fc-4a31-8385-08ff0748d1d3.png)<br>
